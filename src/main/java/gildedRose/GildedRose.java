@@ -29,76 +29,52 @@ public class GildedRose {
                 calculationAgedBrie(item);
                 continue;
             }
+
             if (isNameBackstagePassesToATAFKAL80ETCConcert(item)) {
                 calculationBackstagePasses(item);
                 continue;
             }
 
-            if (!isNameAgedBrie(item)
-                    && !isNameBackstagePassesToATAFKAL80ETCConcert(item)) {
-                if (item.quality > 0) {
-                    if (!isNameSulfurasHandRagnaros(item)) {
-                        item.quality = item.quality - 1;
-                    }
-                }
+            if(isNameSulfurasHandRagnaros(item)){
+                continue;
             }
 
-            if (!isNameSulfurasHandRagnaros(item)) {
-                item.sellIn = item.sellIn - 1;
-            }
-
-            if (item.sellIn < 0) {
-                if (!isNameAgedBrie(item)) {
-                    if (!isNameBackstagePassesToATAFKAL80ETCConcert(item)) {
-                        if (item.quality > 0) {
-                            if (!isNameSulfurasHandRagnaros(item)) {
-                                item.quality = item.quality - 1;
-                            }
-                        }
-                    } else {
-                        item.quality = 0;
-                    }
-                } else {
-                    if (item.quality < 50) {
-                        item.quality = item.quality + 1;
-                    }
-                }
-            }
+            calculationOtherName(item);
         }
     }
 
     private void calculationAgedBrie(Item item) {
         if (item.getSellIn() < 1) {
             item.quality = Math.min(item.quality + 2, 50);
-        }else {
+        } else {
             item.quality = Math.min(item.quality + 1, 50);
         }
-
         item.sellIn--;
     }
 
     private void calculationBackstagePasses(Item item) {
-        if (item.quality < 50) {
-            item.quality = item.quality + 1;
-
-            if (isNameBackstagePassesToATAFKAL80ETCConcert(item)) {
-                if (item.sellIn < 11) {
-                    if (item.quality < 50) {
-                        item.quality = item.quality + 1;
-                    }
-                }
-
-                if (item.sellIn < 6) {
-                    if (item.quality < 50) {
-                        item.quality = item.quality + 1;
-                    }
-                }
-            }
-        }
-        item.sellIn = item.sellIn - 1;
-
+        item.sellIn--;
         if (item.sellIn < 0) {
             item.quality = 0;
+            return;
         }
+        if (item.sellIn < 5) {
+            item.quality = Math.min(item.quality + 3, 50);
+            return;
+        }
+        if (item.sellIn < 10) {
+            item.quality = Math.min(item.quality + 2, 50);
+            return;
+        }
+        item.quality = Math.min(item.quality + 1, 50);
+    }
+
+    private void calculationOtherName(Item item) {
+        if (item.sellIn < 1) {
+            item.quality = Math.max(item.quality - 2, 0);
+        }else{
+            item.quality = Math.max(item.quality - 1, 0);
+        }
+        item.sellIn--;
     }
 }
